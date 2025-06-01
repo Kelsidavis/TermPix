@@ -8,6 +8,7 @@
 
 int enable_dithering = 0;
 int render_mode = 0; // 0 = auto, 1 = half-blocks (color), 2 = braille (detail)
+extern int silent_mode;
 
 // Braille dot positions (2x4 grid):
 // 1 4
@@ -50,7 +51,9 @@ static double calculate_color_variance(const Image *img) {
 
 // High-quality half-block renderer (better for color images)
 static void render_half_blocks(const Image *img, int max_width, int max_height) {
-    printf("Using half-block mode (optimized for color)\n");
+    if (!silent_mode) {
+        printf("Using half-block mode (optimized for color)\n");
+    }
     
     // Get terminal size
     int term_rows, term_cols;
@@ -81,8 +84,10 @@ static void render_half_blocks(const Image *img, int max_width, int max_height) 
     double scale_x = (double)img->width / out_cols;
     double scale_y = (double)img->height / (out_rows * 2);
     
-    printf("Half-blocks: %d×%d chars (%d×%d pixels) from %d×%d\n", 
-           out_cols, out_rows * 2, out_cols, out_rows * 2, img->width, img->height);
+    if (!silent_mode) {
+        printf("Half-blocks: %d×%d chars (%d×%d pixels) from %d×%d\n", 
+               out_cols, out_rows * 2, out_cols, out_rows * 2, img->width, img->height);
+    }
     
     for (int y = 0; y < out_rows; ++y) {
         for (int x = 0; x < out_cols; ++x) {
@@ -126,7 +131,9 @@ static void render_half_blocks(const Image *img, int max_width, int max_height) 
 
 // High-detail braille renderer (better for line art and B&W)
 static void render_braille(const Image *img, int max_width, int max_height) {
-    printf("Using braille mode (optimized for detail)\n");
+    if (!silent_mode) {
+        printf("Using braille mode (optimized for detail)\n");
+    }
     
     // Get terminal size
     int term_rows, term_cols;
@@ -161,8 +168,10 @@ static void render_braille(const Image *img, int max_width, int max_height) {
     double scale_x = (double)img->width / render_width;
     double scale_y = (double)img->height / render_height;
     
-    printf("Braille: %d×%d chars (%d×%d pixels) from %d×%d\n", 
-           out_cols, out_rows, render_width, render_height, img->width, img->height);
+    if (!silent_mode) {
+        printf("Braille: %d×%d chars (%d×%d pixels) from %d×%d\n", 
+               out_cols, out_rows, render_width, render_height, img->width, img->height);
+    }
     
     // Create grayscale version for thresholding
     int *gray_image = malloc(render_width * render_height * sizeof(int));
@@ -255,14 +264,17 @@ void render_image(const Image *img, int max_width, int max_height) {
     // Auto-detect best mode if not specified
     if (selected_mode == 0) {
         double color_variance = calculate_color_variance(img);
-        printf("Color variance: %.1f ", color_variance);
+        
+        if (!silent_mode) {
+            printf("Color variance: %.1f ", color_variance);
+        }
         
         if (color_variance > 15.0) {
             selected_mode = 1; // Half-blocks for colorful images
-            printf("(colorful - using half-blocks)\n");
+            if (!silent_mode) printf("(colorful - using half-blocks)\n");
         } else {
             selected_mode = 2; // Braille for B&W/line art
-            printf("(monochrome - using braille)\n");
+            if (!silent_mode) printf("(monochrome - using braille)\n");
         }
     }
     

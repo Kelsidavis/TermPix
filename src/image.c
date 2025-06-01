@@ -3,8 +3,12 @@
 #include "image.h"
 #include <stdio.h>
 
+extern int silent_mode;
+
 int load_image(const char *filename, Image *img) {
-    printf("Attempting to load: %s\n", filename);
+    if (!silent_mode) {
+        printf("Attempting to load: %s\n", filename);
+    }
 
     // Force 3 channels (RGB) for consistency
     img->data = stbi_load(filename, &img->width, &img->height, &img->channels, 3);

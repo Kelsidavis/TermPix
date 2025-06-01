@@ -11,6 +11,7 @@
 * 🔍 Braille detail rendering (4× resolution for line work)
 * 🖼️ Dithering support with Floyd–Steinberg algorithm
 * 🧱 Terminal-aware sizing with aspect ratio preservation
+* 🔇 Silent mode for clean output (perfect for piping and automation)
 * 💻 Cross-platform: Fully compatible with Windows (PowerShell/cmd) and Unix terminals
 
 ---
@@ -42,8 +43,37 @@ TermPix auto-detects terminal size and rendering mode.
 | `--mode MODE`  | Set rendering mode: `auto`, `color`, or `detail`                  |
 | `--dither`     | Enable dithering for smoother gradients                           |
 | `--fit`        | Force exact dimension scaling (disable aspect ratio preservation) |
+| `--silent`     | Suppress all status messages (output image only)                  |
 | `--version`    | Show version and feature information                              |
 | `--help`, `-h` | Show usage instructions                                           |
+
+---
+
+## Silent Mode
+
+The `--silent` flag suppresses all status output, banner messages, and performance statistics, leaving only the rendered image. This is perfect for:
+
+- **Piping output to files**: `termpix --silent image.jpg > output.txt`
+- **Shell scripts and automation**: Clean output without progress indicators
+- **Integration with other tools**: Use TermPix as part of a pipeline
+
+### Silent Mode Examples
+
+```bash
+# Save rendered image to a file
+termpix --silent vacation.jpg > vacation_ascii.txt
+
+# Use in a script without status messages
+termpix --silent --mode color photo.png
+
+# Pipe to other commands
+termpix --silent diagram.png | less
+
+# Batch processing
+for img in *.jpg; do
+    termpix --silent "$img" > "${img%.jpg}_ascii.txt"
+done
+```
 
 ---
 
@@ -100,17 +130,62 @@ gcc -o termpix main.c render.c terminal.c image.c -lm
 ## Examples
 
 ```powershell
+# Basic usage
 termpix photo.jpg
+
+# High-quality color mode with dithering
 termpix --mode color --dither portrait.png
+
+# Detail mode for diagrams and line art
 termpix --mode detail flowchart.tga
+
+# Custom dimensions with forced fit
 termpix --width 100 --height 40 --fit diagram.bmp
+
+# Silent mode for file output
+termpix --silent image.jpg > ascii_art.txt
+
+# Silent mode with custom settings
+termpix --silent --width 80 --mode color sunset.png > output.txt
 ```
+
+---
+
+## Rendering Modes
+
+### Auto Mode (Default)
+TermPix analyzes the image's color variance to automatically choose between color and detail modes:
+- **Color images** (photos, artwork) → Half-block mode for rich colors
+- **Monochrome images** (diagrams, text) → Braille mode for sharp detail
+
+### Color Mode
+Uses Unicode half-block characters (▀) with foreground and background colors:
+- **2× vertical resolution** compared to normal text
+- **Perfect for photographs** and colorful artwork
+- Rich 24-bit color support
+
+### Detail Mode  
+Uses Unicode braille characters for maximum detail:
+- **4× resolution** (2×2 dots per character)
+- **Ideal for line art**, diagrams, and text
+- Sharp, crisp edges with high contrast
+
+---
+
+## Pro Tips
+
+- Use `--dither` with photos for smoother color transitions
+- Try `--mode detail` for text, diagrams, and line art  
+- Use `--silent` for clean output when piping to files or using in scripts
+- Adjust terminal font size for optimal viewing experience
+- Larger `--width` values show more detail, smaller ones give overview
+- Combine with shell pipes: `termpix --silent image.jpg | less`
 
 ---
 
 ## Author
 
-**Kelsi Davis**
+**Kelsi Davis**  
 🌐 [https://geekastro.dev](https://geekastro.dev)
 
 TermPix is part of a suite of tools focused on accessible software for data visualization and astrophotography workflows.
