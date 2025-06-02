@@ -1,0 +1,25 @@
+# Build artifacts
+termpix
+*.o
+*.exe
+
+# Nix
+result
+result-*
+.direnv/
+
+# Development
+compile_commands.json
+.cache/
+*.dSYM/
+
+# Editor
+.vscode/
+*.swp
+*~
+
+# Documentation
+CLAUDE.md
+
+# macOS
+.DS_Store

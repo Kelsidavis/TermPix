@@ -2,6 +2,8 @@
 
 **TermPix** is a high-resolution terminal image renderer built in C. It transforms images into rich, colorful terminal graphics using half-block and braille rendering modes with automatic optimization based on image content.
 
+> **Note**: This is a fork of the original [TermPix by Kelsi Davis](https://github.com/Kelsidavis/TermPix) with added Nix flake support for reproducible builds and development environments.
+
 ---
 
 ## Features
@@ -124,6 +126,51 @@ Requires `stb_image.h` in the `lib/` directory.
 ```bash
 gcc -o termpix main.c render.c terminal.c image.c -lm
 ```
+
+---
+
+## 🐧 Nix Flake Support
+
+This fork includes full Nix flake support for reproducible builds and development environments.
+
+### Quick Start
+
+```bash
+# Run directly without installing
+nix run github:Kelsidavis/TermPix -- image.jpg
+
+# Install to your profile (permanent installation)
+nix profile install github:Kelsidavis/TermPix
+
+# Build the package
+nix build github:Kelsidavis/TermPix
+
+# Enter development shell with all tools
+nix develop github:Kelsidavis/TermPix
+```
+
+### Local Development
+
+```bash
+# Clone the repository
+git clone https://github.com/Kelsidavis/TermPix
+cd TermPix
+
+# Enter development environment
+nix develop
+
+# Build and run
+make
+./termpix screenshot.jpg
+```
+
+The development shell includes:
+- ✅ GCC compiler and build tools
+- ✅ GDB debugger
+- ✅ Static analysis (cppcheck)
+- ✅ Code formatting (clang-format)
+- ✅ Cross-compilation for Windows
+- ✅ Documentation tools (doxygen)
 
 ---
 
